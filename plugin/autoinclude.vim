@@ -39,8 +39,8 @@ endif
 
 "here is example maybe re-design
 let g:auto_include_db = {}
-let g:auto_include_db['stl'] = { 'cin':'<iostream>', 'cout':'<iostream>','vector':'<vector>' }
-let g:auto_include_db['posix'] = {'pthread_create':'<pthread.h>'  }
+let g:auto_include_db['stl'] = { 'cin':'<iostream>', 'cout':'<iostream>','vector':'<vector>' ,}
+let g:auto_include_db['posix'] = {'pthread_create':'<pthread.h>' , 'cin':'<xxx>' }
 function NeedInclude(inc)
     for line in getline(1, '$')
         if matchstr(line, '#include *' . a:inc ) != ''
