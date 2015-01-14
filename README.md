@@ -24,4 +24,4 @@ the project has not finish
 - command AIS headers... add the headers after the auto inlcude guard, guarantee it is uniqued( use #include <...>  )
 - command AIU headers... add the headers after the auto include guard, guarantee it is uniqued( use #include "")
 - finished database format.  the database for STL, posix, Qt
-- a program help to generate the database
+- a program help to generate the database ( base on ctags or libclang AST )
