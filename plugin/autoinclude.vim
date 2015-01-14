@@ -9,22 +9,39 @@ if exists('g:loaded_autoinclude')
 endif
 let g:loaded_autoinclude = 1
 
-if !exists('g:auto_include_cursor_invoker')
-    let g:auto_include_cursor_invoker = 'i'
-endif
 
 let s:auto_include_qf_flg = 0
-if ! exists('g:auto_include_guard')
-    let g:auto_include_guard = '//auto-include {{{'
-endif
+let g:auto_include_cursor_invoker = get(g:, 'auto_include_cursor_invoker', 'i')
+let g:auto_include_guard = get(g:, 'auto_include_guard', '//auto-include {{{')
+let g:auto_include_close = get(g:, 'auto_include_close', '//}}}')
+let g:auto_include_after_line = get(g:, 'auto_include_after_line', 0)
+let g:auto_append_guard = get(g: ,'auto_append_guard', 1)
 
-if ! exists('g:auto_include_close')
-    let g:auto_include_close = '//}}}'
-endif
-
-if ! exists('g:auto_include_after_line')
-    let g:auto_include_after_line = 0
-endif
+let s:autoinclude_file = expand('<sfile>:p')
+let s:autoinclude_plugin_dir = expand('<sfile>:p:h:h')
+let g:auto_include_db = get(g:, 'auto_include_db', {})
+function LoadDB()
+python<<EOF
+import os
+import vim
+plugin_dir = vim.eval('s:autoinclude_plugin_dir') + '/db/'
+rst = vim.eval('g:auto_include_db')
+for catelog in os.listdir(plugin_dir):
+    if catelog.startswith('.'):continue
+    d = {}
+    with open(plugin_dir + catelog) as opf:
+        inc = None
+        for line in opf.readlines():
+            line = line.strip()
+            if line.startswith('#'):continue
+            if ':' in line:
+                inc = line.split(':')[0].strip()
+                continue
+            d[line] = inc
+    rst[catelog] = d
+vim.command("let g:auto_include_db = %s"%repr(rst))
+EOF
+endfunc
 
 function s:AppendGuard()
     if &filetype ==? 'c' || &filetype ==? 'cpp'
@@ -32,15 +49,12 @@ function s:AppendGuard()
         call append(g:auto_include_after_line+1, g:auto_include_close)
     endif
 endfunc
-let g:auto_append_guard = 1
-if exists('g:auto_append_guard') && g:auto_append_guard == 1
+
+if g:auto_append_guard == 1
     au bufnewfile * call s:AppendGuard()
 endif
 
 "here is example maybe re-design
-let g:auto_include_db = {}
-let g:auto_include_db['stl'] = { 'cin':'<iostream>', 'cout':'<iostream>','vector':'<vector>' ,}
-let g:auto_include_db['posix'] = {'pthread_create':'<pthread.h>' , 'cin':'<xxx>' }
 function NeedInclude(inc)
     for line in getline(1, '$')
         if matchstr(line, '#include *' . a:inc ) != ''
@@ -53,6 +67,7 @@ endfunc
 function AutoIncludeQuickFix()
     if s:auto_include_qf_flg
         let inc = matchstr(getline('.'), '<.*>')
+        if empty(inc) | let inc = matchstr(getline('.'), '".*"') | endif
         cclose
         call setqflist([])
         let s:auto_include_qf_flg = 0
@@ -89,3 +104,4 @@ function AutoIncludeCursor()
 endfunc
 
 exec "map <silent><leader>".g:auto_include_cursor_invoker . " :call AutoIncludeCursor()<CR>"
+au FileType c,cpp call LoadDB()

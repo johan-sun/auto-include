@@ -7,6 +7,13 @@ some command help the user include the header without swith to the head of curre
 
 keep one header include only onces.
 
+#example of database
+> header:
+> keyword1
+> keyword2
+
+database file store in rtp/db
+
 #example:
 when create a new c, cpp file, a auto include scope will append to the buffer
 
