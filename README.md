@@ -8,12 +8,12 @@ some command help the user include the header without swith to the head of curre
 keep one header include only onces.
 
 #example of database
-> <header1>:      
-> keyword1     
-> keyword2     
-> "header2":
-> keyword3    
-> keyword4    
+> \<header1\>:      
+> keyword1      
+> keyword2      
+> "header2":        
+> keyword3      
+> keyword4      
 
 database file store in rtp/db
 
