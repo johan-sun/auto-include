@@ -29,7 +29,7 @@ queue
 stack
 <deque>:
 deque
-<algorithms>
+<algorithm>:
 all_of
 any_of
 none_of
