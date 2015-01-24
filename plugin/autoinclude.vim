@@ -54,7 +54,6 @@ if g:auto_append_guard == 1
     au bufnewfile * call s:AppendGuard()
 endif
 
-"here is example maybe re-design
 function NeedInclude(inc)
     for line in getline(1, '$')
         if matchstr(line, '#include *' . a:inc ) != ''
@@ -78,6 +77,17 @@ autocmd BufReadPost quickfix  nnoremap <CR> :call AutoIncludeQuickFix()<CR>
 function AutoInclude(inc)
    if NeedInclude( a:inc )
         let lineno = search(g:auto_include_guard, 'n')
+        if matchstr(a:inc, '".*"') != ''
+            let i = lineno
+            while 1
+                let linestr = getline(i+1)
+                if matchstr(linestr, '#include *<.*>') == ''
+                    let lineno = i
+                    break
+                endif
+                let i = i + 1
+            endwhile
+        endif
         call append(lineno, '#include ' . a:inc)
    endif 
 endfunc
@@ -103,5 +113,13 @@ function AutoIncludeCursor()
     call AutoIncludeForkeyword(kwd)
 endfunc
 
+function AutoIncludeHeaders(headers)
+    for header in a:headers
+        call AutoInclude(header)
+    endfor
+endfunc
+
 exec "map <silent><leader>".g:auto_include_cursor_invoker . " :call AutoIncludeCursor()<CR>"
 au FileType c,cpp call LoadDB()
+
+command! -nargs=* INC call AutoIncludeHeaders(split('<args>'))

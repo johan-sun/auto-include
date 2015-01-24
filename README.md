@@ -30,8 +30,9 @@ if there are ambivalent from the database, the candidate headers will show in qu
 
 the project has not finish
 
+the command INC <system header1> <system header2> "user header 3" "user header 4" ....., will add the headers to the auto include head place.
+the user headers will add after the system headers.
+
 #TODO LIST
-- command AIS headers... add the headers after the auto inlcude guard, guarantee it is uniqued( use #include <...>  )
-- command AIU headers... add the headers after the auto include guard, guarantee it is uniqued( use #include "")
-- finished database format.  the database for STL, posix, Qt
+- the database for STL, posix, Qt
 - a program help to generate the database ( base on ctags or libclang AST )
