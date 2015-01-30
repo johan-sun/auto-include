@@ -77,15 +77,12 @@ autocmd BufReadPost quickfix  nnoremap <CR> :call AutoIncludeQuickFix()<CR>
 function AutoInclude(inc)
    if NeedInclude( a:inc )
         let lineno = search(g:auto_include_guard, 'n')
+        while matchstr(getline(lineno+1), '#include *<.*>') != ''
+            let lineno += 1
+        endwhile
         if matchstr(a:inc, '".*"') != ''
-            let i = lineno
-            while 1
-                let linestr = getline(i+1)
-                if matchstr(linestr, '#include *<.*>') == ''
-                    let lineno = i
-                    break
-                endif
-                let i = i + 1
+            while matchstr(getline(lineno+1), '#include *".*"') != ''
+                let lineno += 1
             endwhile
         endif
         call append(lineno, '#include ' . a:inc)
