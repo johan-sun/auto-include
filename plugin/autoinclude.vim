@@ -120,3 +120,5 @@ exec "map <silent><leader>".g:auto_include_cursor_invoker . " :call AutoIncludeC
 au FileType c,cpp call LoadDB()
 
 command! -nargs=* INC call AutoIncludeHeaders(split('<args>'))
+command! -nargs=* IS call AutoIncludeHeaders(map(split('<args>'), '"<". v:val .">"'))
+command! -nargs=* IN call AutoIncludeHeaders(map(split('<args>'), '"\"". v:val ."\""'))
