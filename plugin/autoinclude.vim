@@ -16,7 +16,7 @@ let g:auto_include_guard = get(g:, 'auto_include_guard', '//auto-include {{{')
 let g:auto_include_close = get(g:, 'auto_include_close', '//}}}')
 let g:auto_include_after_line = get(g:, 'auto_include_after_line', 0)
 let g:auto_append_guard = get(g: ,'auto_append_guard', 1)
-
+let g:auto_include_di_key = get(g: , 'auto_include_di_key', 'di')
 let s:autoinclude_file = expand('<sfile>:p')
 let s:autoinclude_plugin_dir = expand('<sfile>:p:h:h')
 let g:auto_include_db = get(g:, 'auto_include_db', {})
@@ -89,9 +89,7 @@ function AutoInclude(inc)
 endfunc
 
 function AutoMapCR()
-    echo 'automapcr'
     if s:auto_include_qf_flg 
-        "autocmd! BufReadPost quickfix  nnoremap <CR> :call AutoIncludeQuickFix()<CR>
         nnoremap <buffer> <CR> :call AutoIncludeQuickFix()<CR>
     endif
 endfunc
@@ -126,7 +124,22 @@ function AutoIncludeHeaders(headers)
     endfor
 endfunc
 
+
+function AutoDeleteLineThenInclude()
+    let l = getline('.')
+    if matchstr(l ,'#include *<.*>') != ''
+        let inc = matchstr(l, '<.*>')
+        d
+        call AutoInclude(inc)
+    elseif matchstr(l ,'#include *".*"') != ''
+        let inc = matchstr(l , '".*"')
+        d
+        call AutoInclude(inc)
+    endif
+endfunc
+
 exec "map <silent><leader>".g:auto_include_cursor_invoker . " :call AutoIncludeCursor()<CR>"
+exec "map <silent><leader>".g:auto_include_di_key . " :call AutoDeleteLineThenInclude()<CR>"
 au FileType c,cpp call LoadDB()
 
 command! -nargs=* INC call AutoIncludeHeaders(split('<args>'))
