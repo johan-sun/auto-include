@@ -73,7 +73,6 @@ function AutoIncludeQuickFix()
         call AutoInclude(inc)
     endif
 endfunc
-autocmd BufReadPost quickfix  nnoremap <CR> :call AutoIncludeQuickFix()<CR>
 function AutoInclude(inc)
    if NeedInclude( a:inc )
         let lineno = search(g:auto_include_guard, 'n')
@@ -89,6 +88,16 @@ function AutoInclude(inc)
    endif 
 endfunc
 
+function AutoMapCR()
+    echo 'automapcr'
+    if s:auto_include_qf_flg 
+        "autocmd! BufReadPost quickfix  nnoremap <CR> :call AutoIncludeQuickFix()<CR>
+        nnoremap <buffer> <CR> :call AutoIncludeQuickFix()<CR>
+    endif
+endfunc
+
+autocmd! BufReadPost quickfix call AutoMapCR()
+"auto include for keyword may open quickfix list
 function AutoIncludeForkeyword(kwd)
     let result = []
     for eachClass in keys(g:auto_include_db)
@@ -100,6 +109,7 @@ function AutoIncludeForkeyword(kwd)
         call AutoInclude(result[0])
     elseif len(result) > 1
         let s:auto_include_qf_flg = 1
+        "autocmd! BufReadPost quickfix  nnoremap <CR> :call AutoIncludeQuickFix()<CR>
         exec "silent! cexpr result"
         bot copen
     endif
